@@ -22,3 +22,41 @@ class Face:
         if not self.eyes_cascade.load(cv.samples.findFile(eyes_cascade_name)):
             print("Error on loading cascade eyes file name")
             exit(-1)
+
+    def detect(self, gray_frame):
+        gray_frame = cv.equalizeHist(gray_frame)
+        faces_roi = self.face_cascade.detectMultiScale(gray_frame)
+        face_sizes = [h * w for x,y,w,h in faces_roi]
+        if self.display:
+            for x,y,w,h in faces_roi:
+                cv.rectangle(gray_frame, (x,y), (x+w, y+h), (0,255), 2)
+            cv.imshow("Capture - face detection", gray_frame)
+        # Get the bigger one
+        return faces_roi
+
+
+
+if __name__ == "__main__":
+    face = Face()
+    face.display = True
+    cap = cv.VideoCapture("/tmp/test.mp4")
+    while(cap.isOpened()):
+        ret, frame = cap.read()
+        tmp = frame.copy()
+        if frame is None:
+            break
+        print(frame,ret)
+        gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
+        points = face.get_roi_of_face(gray)
+#        if points is not None:
+#            for i in points:
+#                xc, yc = i.ravel()
+#                cv.circle(tmp, (xc,yc), 3, 255, -1)
+        cv.imshow("Final points", gray)
+        #detectAndDisplay(gray, face)
+        if cv.waitKey(1) == 27: ## ESC
+            break
+
+
+    cap.release()
+    cv.destroyAllWindows()
