@@ -34,6 +34,23 @@ class Face:
         # Get the bigger one
         return faces_roi
 
+    def get_mask(self, gray_frame):
+        mask = np.zeros(gray_frame.shape, np.uint8)
+        if self.face_rectangle is not None:
+            x,y,w,h = self.face_rectangle[0]
+            mask[y:y+h, x:x+w] = 255
+        if self.display:
+            cv.imshow("Face mask", mask)
+        self.mask = mask
+        return mask
+
+    def get_roi_of_face(self, gray_frame):
+        self.face_rectangle = self.detect(gray_frame)
+        self.get_mask(gray_frame)
+        track_points = cv.goodFeaturesToTrack(gray_frame, mask=self.mask, **self.params)
+        print("Track points:")
+        print(track_points)
+        return track_points
 
 
 if __name__ == "__main__":
