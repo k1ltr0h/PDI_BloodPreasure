@@ -48,6 +48,7 @@ class Face:
         self.face_rectangle = self.detect(gray_frame)
         self.get_mask(gray_frame)
         track_points = cv.goodFeaturesToTrack(gray_frame, mask=self.mask, **self.params)
+        #track_points = cv.goodFeaturesToTrack(gray_frame, 25,0.01,10)
         print("Track points:")
         print(track_points)
         return track_points
@@ -62,14 +63,16 @@ if __name__ == "__main__":
         tmp = frame.copy()
         if frame is None:
             break
-        print(frame,ret)
+        #print(frame,ret)
         gray = cv.cvtColor(frame, cv.COLOR_BGR2GRAY)
         points = face.get_roi_of_face(gray)
-#        if points is not None:
-#            for i in points:
-#                xc, yc = i.ravel()
-#                cv.circle(tmp, (xc,yc), 3, 255, -1)
-        cv.imshow("Final points", gray)
+        points = np.int0(points)
+        if points is not None:
+            for i in points:
+                x, y = i.ravel()
+                print(f"x,y: {x}, {y}")
+                cv.circle(tmp, (x,y),3,255,-1)
+        cv.imshow("Final points", tmp)
         #detectAndDisplay(gray, face)
         if cv.waitKey(1) == 27: ## ESC
             break
