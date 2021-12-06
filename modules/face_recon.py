@@ -3,11 +3,13 @@ import numpy as np
 
 class Face:
 
-    def __init__(self):
+    def __init__(self, 
+                face_cascade_name_ = "./data/haarcascades/haarcascade_frontalface_alt.xml",
+                eyes_cascade_name_ = "./data/haarcascades/haarcascade_eye_tree_eyeglasses.xml"):
         # Add predictor type, 
         # In first instance we'll be using  cv2.CascadeClassifier
-        face_cascade_name = "./data/haarcascades/haarcascade_frontalface_alt.xml"
-        eyes_cascade_name = "./data/haarcascades/haarcascade_eye_tree_eyeglasses.xml"
+        face_cascade_name = face_cascade_name_
+        eyes_cascade_name = eyes_cascade_name_
         self.face_cascade = cv.CascadeClassifier()
         self.eyes_cascade = cv.CascadeClassifier()
         self.face_rectangle = [0,0,0,0]
@@ -36,7 +38,8 @@ class Face:
 
     def get_mask(self, gray_frame):
         mask = np.zeros(gray_frame.shape, np.uint8)
-        if self.face_rectangle is not None:
+        if self.face_rectangle is not None and self.face_rectangle is not ():
+            #print(self.face_rectangle == ())
             x,y,w,h = self.face_rectangle[0]
             mask[y:y+h, x:x+w] = 255
         if self.display:
@@ -50,7 +53,7 @@ class Face:
         track_points = cv.goodFeaturesToTrack(gray_frame, mask=self.mask, **self.params)
         #track_points = cv.goodFeaturesToTrack(gray_frame, 25,0.01,10)
         print("Track points:")
-        print(track_points)
+        print(track_points, "\n \n \n")
         return track_points
 
 
