@@ -38,7 +38,7 @@ class Face:
 
     def get_mask(self, gray_frame):
         mask = np.zeros(gray_frame.shape, np.uint8)
-        if self.face_rectangle is not None and self.face_rectangle is not ():
+        if self.face_rectangle is not None and self.face_rectangle != ():
             #print(self.face_rectangle == ())
             x,y,w,h = self.face_rectangle[0]
             mask[y:y+h, x:x+w] = 255
@@ -51,8 +51,8 @@ class Face:
         self.face_rectangle = self.detect(gray_frame)
         self.get_mask(gray_frame)
         track_points = cv.goodFeaturesToTrack(gray_frame, mask=self.mask, **self.params)
-        print("Track points:")
-        print(track_points, "\n \n \n")
+        #print("Track points:")
+        #print(track_points, "\n \n \n")
         return track_points
 
 
