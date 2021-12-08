@@ -131,14 +131,16 @@ if __name__ == "__main__":
         #print(points)
         points = tracker.filter_points(points, gray_frame)
 
+        prev_points = tracker.prev_points.reshape(-1, 2)
 
-        for point in points:
+        for i, point in enumerate(points):
             #print(point, tuple(point))
+            #print(tracker.prev_points)
+            cv.line(frame, point, prev_points[i], (0, 0, 255), 2)
             frame = cv.circle(frame, tuple(point), 2, (255, 255, 0), -1)
 
         traces = np.int32(tracker.traces).reshape(-1, 1, 2)
 
-        cv.polylines(frame, traces, True, (0, 255, 0), 10)
 
         cv.imshow("Tracking", frame)
 
