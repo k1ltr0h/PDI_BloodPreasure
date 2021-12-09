@@ -56,6 +56,14 @@ class Face:
         return track_points
 
 
+    @staticmethod
+    def point_in_rectangle(xx,yy, x, y, w, h):
+        if xx >= x and xx <= x+w:
+            if yy >= y and yy <= y+h:
+                return True
+        
+        return False
+
 if __name__ == "__main__":
     face = Face()
     face.display = True

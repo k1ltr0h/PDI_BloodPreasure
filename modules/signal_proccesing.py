@@ -10,8 +10,11 @@ from scipy.fftpack import fft, ifft, fftfreq, fftshift
 from sklearn.decomposition import PCA
 
 
-from modules.face import FacePoints
-from modules.tracking import TrackPoints
+#from modules.face import FacePoints
+from modules.face_recon import Face
+from modules.tracking_points import TrackingPoints
+
+
 
 
 
