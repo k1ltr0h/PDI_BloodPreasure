@@ -52,7 +52,7 @@ class TrackingPoints:
             self.prev_frame = frame
             self.prev_points = points
             self.history_points = points.tolist()
-            print(self.history_points)
+            #print(self.history_points)
             #print("o.o\n")
             return points.reshape(-1, 2)
         

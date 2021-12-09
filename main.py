@@ -31,7 +31,7 @@ if __name__ == "__main__":
     face = Face()
     #tracking = TrackingPoints(face, max_points_=300)
     #tracking = TrackPoints(Face)
-    tracking = TrackingPoints(face, max_history_points_ = 300)
+    tracking = TrackingPoints(face, max_history_points_ = 100)
     sig = SignalProcess(tracking, fps)
     print(f"Video FPS: {fps}")
 
