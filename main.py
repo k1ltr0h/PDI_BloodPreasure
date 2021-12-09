@@ -5,22 +5,15 @@ import matplotlib.pyplot as plt
 from scipy import interpolate, signal, optimize
 from scipy.fftpack import fft, ifft, fftfreq, fftshift
 
-
 from modules.signal_proccesing import SignalProcess
 from modules.tracking_points import TrackingPoints
 from modules.face_recon import Face
 
-from modules.test_tracking import TrackPoints
-
-
+from modules.tracking_points import TrackingPoints
 
 import argparse
 
-
-
-
 if __name__ == "__main__":
-
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", type=str, default=None, help = "Process a file instead of video recording")
@@ -38,7 +31,7 @@ if __name__ == "__main__":
     face = Face()
     #tracking = TrackingPoints(face, max_points_=300)
     #tracking = TrackPoints(Face)
-    tracking = TrackPoints(face, max_trace_history=300)
+    tracking = TrackingPoints(face, max_history_points_ = 300)
     sig = SignalProcess(tracking, fps)
     print(f"Video FPS: {fps}")
 
@@ -52,32 +45,36 @@ if __name__ == "__main__":
         gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
         vis = frame.copy()
 
-        gray_frames.insert(0, gray)
+        #gray_frames.insert(0, gray)
 
 #        points = tracking.getPoints(gray)
 #        tracking.filter_points(points, gray)
 #        prev_points = tracking.prev_points.reshape(-1, 2)
 
 
-        if frame_c >= 15:
+        #if frame_c >= 15:
             
-            gray_frames.pop()
-            
-            #points = tracking.getPoints(gray_frames)
-            #tracking.filter_points(points, gray_frames)
-            #prev_points = tracking.prev_points.reshape(-1, 2)
-            #print(prev_points)
-            tracking.track_points(gray_frames[1], gray_frames[0])
+        #gray_frames.pop()
+        
+        #points = tracking.getPoints(gray_frames)
+        #tracking.filter_points(points, gray_frames)
+        #prev_points = tracking.prev_points.reshape(-1, 2)
+        #print(prev_points)
 
-            longest_trace = max( [len(trace) for trace in tracking.traces] )
-            if longest_trace >= 2 * (fps + 1):
-                bpm = sig.find_bpm()
+        points = tracking.getPoints(gray)
+        tracking.filter_points(points, gray)
+
+        longest_trace = max( [len(trace) for trace in tracking.history_points] )
+        if longest_trace >= 2 * (fps + 1):
+            bpm = sig.find_bpm()
+            if bpm != 0:
                 mean_bpm.append(bpm)
                 t.append(frame_c)
-                print(longest_trace)
-                #print(bpm)
-                #print(mean_bpm)
-        points = face.get_roi_of_face(gray)
+            if len(mean_bpm) != 0:
+                print(f"Len: {longest_trace} - BMP: {bpm} - mean_BPM: {sum(mean_bpm)/len(mean_bpm)}")
+            #print(bpm)
+            #print(mean_bpm)
+        #points = face.get_roi_of_face(gray)
         if type(points) == type(None):
             continue
         points = np.int0(points)
@@ -90,6 +87,7 @@ if __name__ == "__main__":
         if cv2.waitKey(1) == 27: ## ESC
             break
         frame_c += 1
+
     plt.plot(t,mean_bpm)
     plt.show()
     print(np.mean(mean_bpm))

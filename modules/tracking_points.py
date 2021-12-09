@@ -94,18 +94,18 @@ class TrackingPoints:
         #    print(i)
         
         # add from starting point
-        new_traces = []
-        for index_point in range(len(next_points)):
+        #new_traces = []
+        for index_point in range(len(self.traces)):
             # Delete unbacktrackable traces
             if filter[index_point]:
                 continue
             self.traces[index_point] = next_points[index_point]
             #print(self.history_points)
-            if self.max_history_points > len(self.history_points):
+            if self.max_history_points > len(self.history_points[index_point]):
                 self.history_points[index_point].append(next_points[index_point].tolist())
             else:
                 self.history_points[index_point].pop(0)
-                self.history_points[index_point].append(next_points[index_point].tolist())
+                #self.history_points[index_point].append(next_points[index_point].tolist())
         #print(self.history_points)
 
         # Add new traces if it shrink

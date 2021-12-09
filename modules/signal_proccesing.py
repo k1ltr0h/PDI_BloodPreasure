@@ -127,7 +127,7 @@ class SignalProcess:
 
         bpm = 0
 
-        traces = self.get_y(self.signal_source.traces)
+        traces = self.get_y(self.signal_source.history_points)
         
         filtered_signals = self.filter_signals(traces, low_c=low_c, high_c=high_c)
 
