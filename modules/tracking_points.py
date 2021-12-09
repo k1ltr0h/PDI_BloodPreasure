@@ -12,6 +12,7 @@ import numpy as np
 class TrackingPoints:
     def __init__(self, face_detector_, max_points_ = 100, max_history_points_ = 100):
 
+        self.verbose = False
         self.face_detector = face_detector_
         self.traces = []
         self.max_history_points = max_history_points_
@@ -37,8 +38,10 @@ class TrackingPoints:
         self.prev_points = self.traces
         self.traces = []
         for i in range(self.max_points):
-            self.traces.append(points[i])
-
+            if i < len(points):
+                self.traces.append(points[i])
+            else:
+                self.traces.append([0,0])
         return np.int32(self.traces).reshape(-1, 1, 2)
 
     def filter_points(self, points, frame):
@@ -66,10 +69,12 @@ class TrackingPoints:
        # print(abs(points-backNextPts).reshape(-1, 2), abs(points-backNextPts).reshape(-1, 2).max(-1))
 
         # Select backtraced points that are in 1 pixel dist
-        print(dist)
+        if self.verbose:
+            print(dist)
         filter = dist > 1
-
-        print(len(points), len(filter))
+        
+        if self.verbose:
+            print(len(points), len(filter))
 
         self.prev_frame = frame
         self.prev_points = points
@@ -87,7 +92,7 @@ class TrackingPoints:
 
         #for i in next_points:
         #    print(i)
-
+        
         # add from starting point
         new_traces = []
         for index_point in range(len(next_points)):
