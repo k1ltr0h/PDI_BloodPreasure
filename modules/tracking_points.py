@@ -10,11 +10,13 @@ import numpy as np
 
 
 class TrackingPoints:
-    def __init__(self, face_detector_, max_points_ = 100):
+    def __init__(self, face_detector_, max_points_ = 100, max_history_points_ = 100):
 
         self.face_detector = face_detector_
         self.traces = []
+        self.max_history_points = max_history_points_
         self.max_points = max_points_
+        self.history_points = []
         self.prev_frame = None
         self.prev_points = []
         self.params = dict( winSize  = (15,15),
@@ -46,6 +48,8 @@ class TrackingPoints:
         if self.prev_frame is None or self.prev_points == []:
             self.prev_frame = frame
             self.prev_points = points
+            self.history_points = points.tolist()
+            print(self.history_points)
             #print("o.o\n")
             return points.reshape(-1, 2)
         
@@ -91,6 +95,13 @@ class TrackingPoints:
             if filter[index_point]:
                 continue
             self.traces[index_point] = next_points[index_point]
+            #print(self.history_points)
+            if self.max_history_points > len(self.history_points):
+                self.history_points[index_point].append(next_points[index_point].tolist())
+            else:
+                self.history_points[index_point].pop(0)
+                self.history_points[index_point].append(next_points[index_point].tolist())
+        #print(self.history_points)
 
         # Add new traces if it shrink
         for point in points:
@@ -131,7 +142,7 @@ if __name__ == "__main__":
         #print(points)
         points = tracker.filter_points(points, gray_frame)
 
-        prev_points = tracker.prev_points.reshape(-1, 2)
+        prev_points = np.array(tracker.prev_points).reshape(-1, 2)
 
         for i, point in enumerate(points):
             #print(point, tuple(point))
