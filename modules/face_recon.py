@@ -52,10 +52,10 @@ class Face:
             mask[y:y+h, x:x+w] = 255
         if self.eye1_rectangle is not None and self.eye1_rectangle != ():
             x,y,w,h = self.eye1_rectangle
-            mask[y:y+h, x:x+w] = 0
+            mask[y:y+int(h*1.5), x:x+int(w*1.5)] = 0
         if self.eye2_rectangle is not None and self.eye2_rectangle != ():
             x,y,w,h = self.eye2_rectangle
-            mask[y:y+h, x:x+w] = 0
+            mask[y:y+int(h*1.5), x:x+int(w*1.5)] = 0
     
         if self.display:
             cv.imshow("Face mask", mask)
