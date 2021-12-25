@@ -78,11 +78,11 @@ if __name__ == "__main__":
         if type(points) == type(None):
             continue
         points = np.int0(points)
-        if points is not None:
-            for i in points:
-                x, y = i.ravel()
-                cv2.circle(vis, (x,y),3,255,-1)
-        cv2.imshow("Final points", vis)
+        #if points is not None:
+        #    for i in points:
+        #        x, y = i.ravel()
+        #        cv2.circle(vis, (x,y),3,255,-1)
+        #cv2.imshow("Final points", vis)
         #detectAndDisplay(gray, face)
         if cv2.waitKey(1) == 27: ## ESC
             break
@@ -96,53 +96,3 @@ if __name__ == "__main__":
 
     print(args)
 
-
-'''
-    capture = cv2.VideoCapture("./data/face_videos/p1.mp4")
-
-    fps = int(capture.get(cv2.CAP_PROP_FPS))
-
-    gray_frames = []  
-    frame_c = 0
-
-    face = FacePoints(dedector_type="haar")
-    tracking = TrackPoints(face_dedector=face,max_trace_history=300)
-    sig = SignalProcess(tracking,fps)
-    mean_bpm=[]
-    t=[]
- 
-    while capture.isOpened():
-        # getting a frame
-        ret, frame = capture.read()
-        if not ret:
-            break
-
-        gray = cv2.cvtColor(frame, cv2.COLOR_BGR2GRAY)
-        vis = frame.copy()
-
-        gray_frames.insert(0, gray)
-   
-        if frame_c >= 3:
-            
-            gray_frames.pop()
-            tracking.track_points(gray_frames[1], gray_frames[0])
-            longest_trace = max( [len(trace) for trace in tracking.traces] )
-     
-            if longest_trace >= 2*(fps+1):
-                bpm=sig.find_bpm()
-                mean_bpm.append(bpm)
-
-                t.append(frame_c)
-               
-                
-
-        if cv2.waitKey(1) == 27:
-            break
-        frame_c += 1
-
-    plt.plot(t,mean_bpm)
-    plt.show()
-    print(np.mean(mean_bpm))
-    capture.release()
-    cv2.destroyAllWindows()
-'''
