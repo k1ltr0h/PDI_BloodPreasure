@@ -3,14 +3,20 @@ import numpy as np
 
 class Face:
 
-    def __init__(self):
+    def __init__(self, 
+                face_cascade_name_ = "./data/haarcascades/haarcascade_frontalface_alt.xml",
+                eyes_cascade_name_ = "./data/haarcascades/haarcascade_eye_tree_eyeglasses.xml"):
         # Add predictor type, 
         # In first instance we'll be using  cv2.CascadeClassifier
-        face_cascade_name = "./data/haarcascades/haarcascade_frontalface_alt.xml"
-        eyes_cascade_name = "./data/haarcascades/haarcascade_eye_tree_eyeglasses.xml"
+        face_cascade_name = face_cascade_name_
+        eyes_cascade_name = eyes_cascade_name_
         self.face_cascade = cv.CascadeClassifier()
         self.eyes_cascade = cv.CascadeClassifier()
+        self.eyes2 = cv.CascadeClassifier("./data/haarcascades/haarcascade_eye.xml")
+
         self.face_rectangle = [0,0,0,0]
+        self.eye1_rectangle = [0,0,0,0]
+        self.eye2_rectangle = [0,0,0,0]
         self.display = False
         self.params = dict(maxCorners = 500,
                         qualityLevel = 0.01,
@@ -20,6 +26,9 @@ class Face:
             print("Error on loading cascade file name")
             exit(-1)
         if not self.eyes_cascade.load(cv.samples.findFile(eyes_cascade_name)):
+            print("Error on loading cascade eyes file name")
+            exit(-1)
+        if not self.eyes2.load(cv.samples.findFile(eyes_cascade_name)):
             print("Error on loading cascade eyes file name")
             exit(-1)
 
@@ -36,9 +45,18 @@ class Face:
 
     def get_mask(self, gray_frame):
         mask = np.zeros(gray_frame.shape, np.uint8)
-        if self.face_rectangle is not None:
+        self.add_eyes_to_mask(gray_frame, mask)
+        if self.face_rectangle is not None and self.face_rectangle != ():
+            #print(self.face_rectangle == ())
             x,y,w,h = self.face_rectangle[0]
             mask[y:y+h, x:x+w] = 255
+        if self.eye1_rectangle is not None and self.eye1_rectangle != ():
+            x,y,w,h = self.eye1_rectangle
+            mask[y:y+h, x:x+w] = 0
+        if self.eye2_rectangle is not None and self.eye2_rectangle != ():
+            x,y,w,h = self.eye2_rectangle
+            mask[y:y+h, x:x+w] = 0
+    
         if self.display:
             cv.imshow("Face mask", mask)
         self.mask = mask
@@ -48,11 +66,29 @@ class Face:
         self.face_rectangle = self.detect(gray_frame)
         self.get_mask(gray_frame)
         track_points = cv.goodFeaturesToTrack(gray_frame, mask=self.mask, **self.params)
-        #track_points = cv.goodFeaturesToTrack(gray_frame, 25,0.01,10)
-        print("Track points:")
-        print(track_points)
+        #print(track_points, "\n \n \n")
+        #print("Track points:")
         return track_points
 
+    def add_eyes_to_mask(self, gray_frame, mask):
+        eyes = self.eyes2.detectMultiScale(gray_frame)
+        if len(eyes) == 2:
+            self.eye1_rectangle = eyes[0]
+            self.eye2_rectangle = eyes[1]
+            return
+        #x,y,w,h = eyes[0]
+        #x1,y1,w1,h1 = eyes[1]
+        #mask[y:y+h , x:x+w] = 255
+        #mask[y1:y1+h1 , x1:x1+w1] = 255
+
+
+    @staticmethod
+    def point_in_rectangle(xx,yy, x, y, w, h):
+        if xx >= x and xx <= x+w:
+            if yy >= y and yy <= y+h:
+                return True
+        
+        return False
 
 if __name__ == "__main__":
     face = Face()
