@@ -28,6 +28,9 @@ class SignalProcess:
         self.bpm_list = []
         self.mean_bpm = 0
 
+        self.sist_press=[]
+        self.dist_press=[]
+
 
 
 
@@ -126,22 +129,32 @@ class SignalProcess:
     def find_bpm(self, bpm_list_len=10, low_c=0.5, high_c=3.0):
 
         bpm = 0
+<<<<<<< HEAD
+        sist = 0
+        traces = self.get_y(self.signal_source.traces)
+=======
 
         traces = self.get_y(self.signal_source.history_points)
+>>>>>>> b50c21187b01b013d8c87754d22e0e73feb4155b
         
         filtered_signals = self.filter_signals(traces, low_c=low_c, high_c=high_c)
 
         bpm = self.pca(filtered_signals, self.fs)
-
         self.bpm_list.insert(0, bpm)
 
         if len(self.bpm_list) > bpm_list_len:
             self.bpm_list.pop()
 
         self.mean_bpm = sum(self.bpm_list) / len(self.bpm_list)
+        sist=-0.41482*bpm+216.7
+        dist=sist-bpm
+        self.sist_press.insert(0,sist)
+        self.dist_press.insert(0,dist)
 
-        return bpm
+        return bpm, sist, dist
     
+
+            
 
 if __name__ == "__main__":
 
@@ -157,6 +170,8 @@ if __name__ == "__main__":
     tracking = TrackPoints(face_dedector=face,max_trace_history=300)
     sig = SignalProcess(tracking,fps)
     mean_bpm=[]
+    mean_sist=[]
+    mean_dist=[]
     t=[]
  
     while capture.isOpened():
@@ -177,9 +192,10 @@ if __name__ == "__main__":
             longest_trace = max( [len(trace) for trace in tracking.traces] )
      
             if longest_trace >= 2*(fps+1):
-                bpm=sig.find_bpm()
+                bpm, sist, dist=sig.find_bpm()
+                mean_sist.append(sist)
+                mean_dist.append(dist)
                 mean_bpm.append(bpm)
-
                 t.append(frame_c)
                
                 
@@ -190,6 +206,6 @@ if __name__ == "__main__":
 
     plt.plot(t,mean_bpm)
     plt.show()
-    print(np.mean(mean_bpm))
+    print(np.mean(mean_bpm), np.mean(mean_sist), np.mean(mean_dist))
     capture.release()
     cv2.destroyAllWindows()
