@@ -129,13 +129,8 @@ class SignalProcess:
     def find_bpm(self, bpm_list_len=10, low_c=0.5, high_c=3.0):
 
         bpm = 0
-<<<<<<< HEAD
-        sist = 0
-        traces = self.get_y(self.signal_source.traces)
-=======
 
         traces = self.get_y(self.signal_source.history_points)
->>>>>>> b50c21187b01b013d8c87754d22e0e73feb4155b
         
         filtered_signals = self.filter_signals(traces, low_c=low_c, high_c=high_c)
 

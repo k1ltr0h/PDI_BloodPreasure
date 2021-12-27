@@ -7,6 +7,7 @@ from scipy.fftpack import fft, ifft, fftfreq, fftshift
 
 from modules.signal_proccesing import SignalProcess
 from modules.tracking_points import TrackingPoints
+#from modules.test_tracking import TrackPoints 
 from modules.face_recon import Face
 
 from modules.tracking_points import TrackingPoints
@@ -29,9 +30,9 @@ if __name__ == "__main__":
     gray_frames = []
     frame_c = 0
     face = Face()
-    #tracking = TrackingPoints(face, max_points_=300)
+    tracking = TrackingPoints(face, max_points_=300)
     #tracking = TrackPoints(Face)
-    tracking = TrackingPoints(face, max_history_points_ = 100)
+    #tracking = TrackingPoints(face, max_history_points_ = 100)
     sig = SignalProcess(tracking, fps)
     print(f"Video FPS: {fps}")
 
@@ -71,9 +72,7 @@ if __name__ == "__main__":
                 mean_bpm.append(bpm)
                 t.append(frame_c)
             if len(mean_bpm) != 0:
-                print(f"Len: {longest_trace} - BMP: {bpm} - mean_BPM: {sum(mean_bpm)/len(mean_bpm)}")
-            #print(bpm)
-            #print(mean_bpm)
+                print(f"Len: {longest_trace} - BMP: {bpm} - mean_BPM: {sum(mean_bpm[0])/len(mean_bpm[0])}")
         #points = face.get_roi_of_face(gray)
         if type(points) == type(None):
             continue
