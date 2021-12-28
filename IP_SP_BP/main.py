@@ -37,8 +37,6 @@ if __name__ == "__main__":
     print(f"Video FPS: {fps}")
     face = Face()
 
-    frame_c = 0
-
     Vr = []
     Vg = []
     Vb = []
@@ -55,19 +53,11 @@ if __name__ == "__main__":
 
         face_roi = face.face_rectangle #[x1, y1, new_w, new_h]
 
-        # # if face.display == True:
-        (Y, Cr, Cb) = cv2.split(tmp)
-
-        gray_Y = cv2.bitwise_and(Y, Y, mask = cv2.cvtColor(face.mask, cv2.COLOR_BGR2GRAY))
-
-        # cv2.imshow("Y channel", gray_Y)
-
         tmp = face.filterBySkinColor("Yellow", tmp)
 
         tmp = cv2.bitwise_and(tmp, tmp, mask = cv2.cvtColor(face.mask, cv2.COLOR_BGR2GRAY))
 
-        #signal preprocessing
-
+        # signal preprocessing
         # frame in rgb
         tmp_rgb = cv2.cvtColor(tmp, cv2.COLOR_YCrCb2BGR)
 
@@ -86,7 +76,6 @@ if __name__ == "__main__":
 
         # print(V)
 
-
         if type(points) == type(None):
             continue
 
@@ -95,12 +84,6 @@ if __name__ == "__main__":
         if cv2.waitKey(1) == 27: ## ESC
             break
 
-        frame_c += 1
-        # print(frame_c)
-
-    # print(Vr)
-    # print(Vg)
-    # print(Vb)
 
     # signal preprocessing
 
@@ -136,9 +119,9 @@ if __name__ == "__main__":
     peaks_down, _= signal.find_peaks(-Vg_ica_def, height=0) 
     
     #Plotting
-    plt.plot(Vg_ica[0:50])
-    plt.plot(peaks_up[0:50], Vg_ica_def[peaks_up][0:50], "x")
-    plt.plot(peaks_down[0:50], Vg_ica_def[peaks_down][0:50], "o")
+#    plt.plot(Vg_ica[0:50])
+#    plt.plot(peaks_up[0:50], Vg_ica_def[peaks_up][0:50], "x")
+#    plt.plot(peaks_down[0:50], Vg_ica_def[peaks_down][0:50], "o")
 
     #Estimate BP
     Ep=[]
@@ -154,6 +137,6 @@ if __name__ == "__main__":
     SBP = 23.7889 + 95.4335 * Ep_mean + 4.5958 * bmi - 5.109 *Ep_mean*bmi
     DBP = -17.3772 - 115.1747 * Ev_mean + 4.0251 * bmi + 5.2825 * Ev_mean * bmi
 
-    print(SBP,DBP)
+    print("SBP: " + str(SBP) + "\tDBP: " + str(DBP))
     capture.release()
     cv2.destroyAllWindows()
