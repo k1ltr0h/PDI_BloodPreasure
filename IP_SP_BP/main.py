@@ -2,6 +2,7 @@ import cv2
 import numpy as np
 import matplotlib.pyplot as plt
 
+from sklearn.decomposition import FastICA
 from modules.face_recon import Face
 
 from scipy import signal
@@ -120,7 +121,7 @@ if __name__ == "__main__":
     Vb_norm = (Vb_filt - Vb_filt.mean()) / Vb_filt.std()
 
     # print(Vb_norm)
-    
+
     #ICA
     trial=Vg_norm.reshape(-1,1)
     ica = FastICA(n_components=1)
