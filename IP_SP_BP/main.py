@@ -1,11 +1,25 @@
 import cv2
 import numpy as np
+import matplotlib.pyplot as plt
 
 from modules.face_recon import Face
 
 from scipy import signal
 
 import argparse
+
+# highpass filter
+
+def butter_highpass(cutoff, fs, order=5):
+    nyq = 0.5 * fs
+    normal_cutoff = cutoff / nyq
+    b, a = signal.butter(order, normal_cutoff, btype='high', analog=False)
+    return b, a
+    
+def butter_highpass_filter(data, cutoff, fs, order=5):
+    b, a = butter_highpass(cutoff, fs, order=order)
+    y = signal.filtfilt(b, a, data)
+    return y
 
 if __name__ == "__main__":
 
@@ -30,16 +44,17 @@ if __name__ == "__main__":
 
     while(capture.isOpened()):
         ret, frame = capture.read()
+        if not ret: 
+            break
+
         tmp = frame.copy()
         tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2YCrCb)
-        if frame is None:
-            break
 
         points = face.get_roi_of_face(frame)
 
         face_roi = face.face_rectangle #[x1, y1, new_w, new_h]
 
-        # if face.display == True:
+        # # if face.display == True:
         (Y, Cr, Cb) = cv2.split(tmp)
 
         gray_Y = cv2.bitwise_and(Y, Y, mask = cv2.cvtColor(face.mask, cv2.COLOR_BGR2GRAY))
@@ -68,21 +83,6 @@ if __name__ == "__main__":
         Vg.append(Vg_val)
         Vb.append(Vb_val)
 
-
-        # tmp_det = signal.detrend(V)
-
-        # print(tmp_det)
-
-        # w = 10 / (fps / 2)
-        # a, b = signal.butter(5, w, 'highpass')
-
-        # tmp_det = signal.filtfilt(a, b, tmp_det)
-
-        # tmp_norm = (tmp_det - tmp_det.mean()) / tmp_det.std()
-
-        
-
-
         # print(V)
 
 
@@ -93,14 +93,33 @@ if __name__ == "__main__":
 
         if cv2.waitKey(1) == 27: ## ESC
             break
+
         frame_c += 1
-        print(frame_c)
+        # print(frame_c)
 
-    #cv2.waitKey(0)
+    # print(Vr)
+    # print(Vg)
+    # print(Vb)
 
-    print(Vr)
-    print(Vg)
-    print(Vb)
+    # signal preprocessing
+
+    # detrending
+
+    Vr_det = signal.detrend(Vr)
+    Vg_det = signal.detrend(Vg)
+    Vb_det = signal.detrend(Vb)
+
+    Vr_filt = butter_highpass_filter(Vr_det,10,fps)
+    Vg_filt = butter_highpass_filter(Vg_det,10,fps)
+    Vb_filt = butter_highpass_filter(Vb_det,10,fps)
+
+    # normalizing
+
+    Vr_norm = (Vr_filt - Vr_filt.mean()) / Vr_filt.std()
+    Vg_norm = (Vg_filt - Vg_filt.mean()) / Vg_filt.std()
+    Vb_norm = (Vb_filt - Vb_filt.mean()) / Vb_filt.std()
+
+    # print(Vb_norm)
 
     capture.release()
     cv2.destroyAllWindows()
