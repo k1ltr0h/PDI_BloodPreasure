@@ -120,6 +120,39 @@ if __name__ == "__main__":
     Vb_norm = (Vb_filt - Vb_filt.mean()) / Vb_filt.std()
 
     # print(Vb_norm)
+    
+    #ICA
+    trial=Vg_norm.reshape(-1,1)
+    ica = FastICA(n_components=1)
+    Vg_ica = ica.fit_transform(trial)
+    Vg_ica_def=[]
+    for i in range(len(Vg_ica)):
+        Vg_ica_def.append(Vg_ica[i][0])
+    Vg_ica_def=np.asarray(Vg_ica_def)   
+    
+    #Peak-Detection
+    peaks_up, _= signal.find_peaks(Vg_ica_def, height=0)
+    peaks_down, _= signal.find_peaks(-Vg_ica_def, height=0) 
+    
+    #Plotting
+    plt.plot(Vg_ica[0:50])
+    plt.plot(peaks_up[0:50], Vg_ica_def[peaks_up][0:50], "x")
+    plt.plot(peaks_down[0:50], Vg_ica_def[peaks_down][0:50], "o")
 
+    #Estimate BP
+    Ep=[]
+    for i in range(len(peaks_up)):
+        Ep.append(Vg_ica_def[peaks_up[i]])
+    
+    Ev=[]
+    for j in range(len(peaks_down)):
+        Ev.append(Vg_ica_def[peaks_down[j]])
+    Ep_mean=sum(Ep)/len(Ep)
+    Ev_mean=sum(Ev)/len(Ev)
+    bmi=20
+    SBP = 23.7889 + 95.4335 * Ep_mean + 4.5958 * bmi - 5.109 *Ep_mean*bmi
+    DBP = -17.3772 - 115.1747 * Ev_mean + 4.0251 * bmi + 5.2825 * Ev_mean * bmi
+
+    print(SBP,DBP)
     capture.release()
     cv2.destroyAllWindows()
