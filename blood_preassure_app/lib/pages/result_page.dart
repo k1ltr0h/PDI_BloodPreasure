@@ -21,17 +21,17 @@ class ResultPage extends StatelessWidget {
               children: [
                 Text(
                   data.sYS.toStringAsFixed(1),
-                  style: TextStyle(fontSize: 110),
+                  style: TextStyle(fontSize: 100),
                 ),
                 Column(
                   children: [
                     Text(
                       ' SYS',
-                      style: TextStyle(fontSize: 60),
+                      style: TextStyle(fontSize: 58),
                     ),
                     Text(
                       ' mmHg',
-                      style: TextStyle(fontSize: 30),
+                      style: TextStyle(fontSize: 26),
                     ),
                   ],
                 ),
@@ -41,22 +41,43 @@ class ResultPage extends StatelessWidget {
               children: [
                 Text(
                   data.dIA.toStringAsFixed(1),
-                  style: TextStyle(fontSize: 110),
+                  style: TextStyle(fontSize: 100),
                 ),
                 Column(
                   children: [
                     Text(
                       ' DIA',
-                      style: TextStyle(fontSize: 60),
+                      style: TextStyle(fontSize: 58),
                     ),
                     Text(
                       ' mmHg',
-                      style: TextStyle(fontSize: 30),
+                      style: TextStyle(fontSize: 26),
                     ),
                   ],
                 ),
               ],
             ),
+            Row(
+              children: [
+                Text(
+                  data.bPM.toStringAsFixed(1),
+                  style: TextStyle(fontSize: 100),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      ' BPM',
+                      style: TextStyle(fontSize: 58),
+                    ),
+                    Text(
+                      ' 1/seg',
+                      style: TextStyle(fontSize: 26),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Image.asset('assets/image.png')
           ],
         ),
       ),

@@ -12,7 +12,7 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  Future<void> changeScreen(Result data) async {
+  Future<void> changeResultScreen(Result data) async {
     await Future.delayed(const Duration(seconds: 3));
     Navigator.pushAndRemoveUntil(
         context,
@@ -22,7 +22,11 @@ class _LoadingPageState extends State<LoadingPage> {
 
   upload() async {
     Result data = await uploadVideo(widget.path);
-    changeScreen(data);
+    if (data.status == 'success') {
+      changeResultScreen(data);
+    } else {
+      Navigator.pop(context);
+    }
   }
 
   @override
@@ -42,7 +46,6 @@ class _LoadingPageState extends State<LoadingPage> {
             const Center(
               child: Text(
                 'Proceando vídeo, obteniendo información de presión sanguínea.',
-                softWrap: true,
                 maxLines: 3,
               ),
             ),

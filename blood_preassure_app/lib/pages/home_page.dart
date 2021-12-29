@@ -50,10 +50,10 @@ class _HomePageState extends State<HomePage> {
                 print(controller.description.lensDirection.index);
                 if (controller.description.lensDirection.index == 1) {
                   controller =
-                      CameraController(cameras[1], ResolutionPreset.max);
+                      CameraController(cameras[1], ResolutionPreset.medium);
                 } else {
                   controller =
-                      CameraController(cameras[0], ResolutionPreset.max);
+                      CameraController(cameras[0], ResolutionPreset.medium);
                 }
                 controller.initialize().then((_) {
                   if (!mounted) {
@@ -79,7 +79,7 @@ class _HomePageState extends State<HomePage> {
           if (!controller.value.isRecordingVideo) {
             controller.prepareForVideoRecording();
             controller.startVideoRecording();
-            await Future.delayed(const Duration(seconds: 10));
+            await Future.delayed(const Duration(seconds: 20));
             XFile videoFile = await controller
                 .stopVideoRecording(); //and there is more in this XFile object
             setState(() {
