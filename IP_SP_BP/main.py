@@ -35,7 +35,10 @@ if __name__ == "__main__":
 
     fps = int(capture.get(cv2.CAP_PROP_FPS)) 
     print(f"Video FPS: {fps}")
+    assert(fps >= 20)
     face = Face()
+
+    frame_count = 0
 
     Vr = []
     Vg = []
@@ -46,6 +49,8 @@ if __name__ == "__main__":
         if not ret: 
             break
 
+        if frame_count == 30*fps:
+            break
         tmp = frame.copy()
         tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2YCrCb)
 
@@ -83,6 +88,10 @@ if __name__ == "__main__":
 
         if cv2.waitKey(1) == 27: ## ESC
             break
+        
+        frame_count += 1
+        if(frame_count%fps==0):
+            print(str(int(frame_count/fps)) + "[s]")
 
 
     # signal preprocessing

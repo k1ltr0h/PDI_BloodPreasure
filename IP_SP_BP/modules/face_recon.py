@@ -13,6 +13,7 @@ class Face:
       self.face_cascade = cv.CascadeClassifier()
       self.eyes_cascade = cv.CascadeClassifier()
       self.face_rectangle = [0,0,0,0]
+
       self.rois4calibrate = 20
       self.mask = []
       self.rois = []
@@ -106,25 +107,6 @@ class Face:
         (Y, Cr, Cb) = cv.split(YCrCbFrame)
         np.where((120 <= Cr) & (Cr <= 170), 255, 0)
         np.where((100 <= Cb) & (Cb <= 150), 255, 0)
-
-          # for row in range(YCrCbFrame.shape[0]):
-
-          # # get the pixel values by iterating
-          #     for col in range(YCrCbFrame.shape[1]):
-          #         #print(YCrCbFrame[row][col])
-          #         for ch in range(YCrCbFrame.shape[2]):
-          #             value = YCrCbFrame[row][col][ch]
-
-          #             if ch == 1 and value < 170 and value > 120:
-          #                 YCrCbFrame[row][col][ch] = 255
-          #             else:
-          #                 YCrCbFrame[row][col][ch] = 0
-
-          #             if ch == 2 and value < 150 and value > 100:
-          #                 YCrCbFrame[row][col][ch] = 255
-          #             else:
-          #                 YCrCbFrame[row][col][ch] = 0
-
       # display image
       # cv.imshow("output", YCrCbFrame)
 
