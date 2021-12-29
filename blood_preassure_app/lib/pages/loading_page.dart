@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:head_pulse_track/models/result.dart';
 import 'package:head_pulse_track/pages/result_page.dart';
 import 'package:head_pulse_track/services/upload_file.dart';
 
@@ -11,19 +12,22 @@ class LoadingPage extends StatefulWidget {
 }
 
 class _LoadingPageState extends State<LoadingPage> {
-  Future<void> changeScreen() async {
+  Future<void> changeScreen(Result data) async {
     await Future.delayed(const Duration(seconds: 3));
     Navigator.pushAndRemoveUntil(
         context,
-        MaterialPageRoute(builder: (context) => ResultPage('120')),
+        MaterialPageRoute(builder: (context) => ResultPage(data)),
         ModalRoute.withName('/')); //Env
+  }
+
+  upload() async {
+    Result data = await uploadVideo(widget.path);
+    changeScreen(data);
   }
 
   @override
   void initState() {
-    uploadVideo(widget.path);
-
-    changeScreen();
+    upload();
     // TODO: implement initState
     super.initState();
   }
@@ -35,12 +39,14 @@ class _LoadingPageState extends State<LoadingPage> {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Text(
-              'Proceando vídeo, obteniendo información de presión sanguínea.',
-              softWrap: true,
-              maxLines: 3,
+            const Center(
+              child: Text(
+                'Proceando vídeo, obteniendo información de presión sanguínea.',
+                softWrap: true,
+                maxLines: 3,
+              ),
             ),
-            LinearProgressIndicator(),
+            const LinearProgressIndicator(),
             Text('Puede tardar hasta 1 minuto.'),
           ],
         ),

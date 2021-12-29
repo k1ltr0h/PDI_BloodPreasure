@@ -10,4 +10,8 @@ class Upload(APIView):
         file = request.FILES['video']
         file_name = default_storage.save('data/'+file.name, file)
 
-        return Response({'message': 'success'})
+
+        return Response({'status': 'success',
+                        'DIA': 120.34,
+                        'SYS': 90.23,
+                        })

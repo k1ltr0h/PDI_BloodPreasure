@@ -1,8 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:head_pulse_track/models/result.dart';
 
 class ResultPage extends StatelessWidget {
-  String bpm;
-  ResultPage(this.bpm);
+  Result data;
+  ResultPage(this.data);
 
   @override
   Widget build(BuildContext context) {
@@ -14,9 +15,49 @@ class ResultPage extends StatelessWidget {
         actions: [],
       ),
       body: Center(
-        child: Text(
-          '120 BPM',
-          style: TextStyle(fontSize: 150),
+        child: Column(
+          children: [
+            Row(
+              children: [
+                Text(
+                  data.sYS.toStringAsFixed(1),
+                  style: TextStyle(fontSize: 110),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      ' SYS',
+                      style: TextStyle(fontSize: 60),
+                    ),
+                    Text(
+                      ' mmHg',
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+            Row(
+              children: [
+                Text(
+                  data.dIA.toStringAsFixed(1),
+                  style: TextStyle(fontSize: 110),
+                ),
+                Column(
+                  children: [
+                    Text(
+                      ' DIA',
+                      style: TextStyle(fontSize: 60),
+                    ),
+                    Text(
+                      ' mmHg',
+                      style: TextStyle(fontSize: 30),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ],
         ),
       ),
     );
