@@ -22,6 +22,9 @@ COPY . /opt/app/
 
 RUN pip3 install -r /opt/app/requirements.txt
 
+RUN ln -s /opt/app/data /opt/app/api_blood_preassure/data 
+RUN ln -s /opt/app/modules /opt/app/api_blood_preassure/modules
+
 EXPOSE 8000
 
 CMD ["/start.sh"]
