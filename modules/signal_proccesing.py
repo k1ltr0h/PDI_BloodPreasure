@@ -130,7 +130,8 @@ class SignalProcess:
 
         bpm = 0
 
-        traces = self.get_y(self.signal_source.history_points)
+        #traces = self.get_y(self.signal_source.history_points)
+        traces = self.get_y(self.signal_source.traces)
         
         filtered_signals = self.filter_signals(traces, low_c=low_c, high_c=high_c)
 
@@ -142,11 +143,12 @@ class SignalProcess:
 
         self.mean_bpm = sum(self.bpm_list) / len(self.bpm_list)
         sist=-0.41482*bpm+216.7
+        #sist=-0.41482 * (bpm+170)
         dist=sist-bpm
         self.sist_press.insert(0,sist)
         self.dist_press.insert(0,dist)
 
-        return bpm, sist, dist
+        return [bpm, sist, dist]
     
 
             

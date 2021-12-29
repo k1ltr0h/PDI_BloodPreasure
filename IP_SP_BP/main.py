@@ -142,7 +142,7 @@ if __name__ == "__main__":
         Ev.append(Vg_ica_def[peaks_down[j]])
     Ep_mean=sum(Ep)/len(Ep)
     Ev_mean=sum(Ev)/len(Ev)
-    bmi=20
+    bmi = 35.7
     SBP = 23.7889 + 95.4335 * Ep_mean + 4.5958 * bmi - 5.109 *Ep_mean*bmi
     DBP = -17.3772 - 115.1747 * Ev_mean + 4.0251 * bmi + 5.2825 * Ev_mean * bmi
 

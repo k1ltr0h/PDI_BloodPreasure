@@ -127,7 +127,7 @@ if __name__ == "__main__":
 
     from face_recon import Face
 
-    cap = cv.VideoCapture(0)
+    cap = cv.VideoCapture("/tmp/test2.mp4")
 
     face_detector = Face("../data/haarcascades/haarcascade_frontalface_alt.xml",
                         "../data/haarcascades/haarcascade_eye_tree_eyeglasses.xml")

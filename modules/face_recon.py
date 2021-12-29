@@ -93,7 +93,7 @@ class Face:
 if __name__ == "__main__":
     face = Face()
     face.display = True
-    cap = cv.VideoCapture("/tmp/test.mp4")
+    cap = cv.VideoCapture("/tmp/test2.mp4")
     while(cap.isOpened()):
         ret, frame = cap.read()
         tmp = frame.copy()
