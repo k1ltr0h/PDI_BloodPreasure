@@ -83,6 +83,8 @@ def calculate_bpm(video):
             #if cv2.waitKey(1) == 27: ## ESC
                 #break
         frame_c += 1
+        if frame_c >= fps * 13:
+            break
 
 
     return (np.mean(mean_bpm), np.mean(mean_sys), np.mean(mean_dis))
