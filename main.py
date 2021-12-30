@@ -60,14 +60,6 @@ if __name__ == "__main__":
         if frame_c >= 15:
             
             gray_frames.pop()
-        #points = tracking.getPoints(gray_frames)
-        #tracking.filter_points(points, gray_frames)
-        #prev_points = tracking.prev_points.reshape(-1, 2)
-        #print(prev_points)
-
-            #points = tracking.getPoints(gray)
-            #tracking.filter_points(points, gray)
-            #longest_trace = max( [len(trace) for trace in tracking.history_points] )
             tracking.track_points(gray_frames[1], gray_frames[0])
             longest_trace = max( [len(trace) for trace in tracking.traces] )
 
@@ -83,16 +75,6 @@ if __name__ == "__main__":
                     t.append(frame_c)
                 if len(mean_bpm) != 0:
                     print(f"mean_BPM: {np.mean(mean_bpm)}, mean_sys: {np.mean(mean_sys)}, mean_dist: {np.mean(mean_dis)}")
-            #points = face.get_roi_of_face(gray)
-            #if type(points) == type(None):
-            #    continue
-            #points = np.int0(points)
-            #if points is not None:
-            #    for i in points:
-            #        x, y = i.ravel()
-            #        cv2.circle(vis, (x,y),3,255,-1)
-            #cv2.imshow("Final points", vis)
-            #detectAndDisplay(gray, face)
             if cv2.waitKey(1) == 27: ## ESC
                 break
         frame_c += 1

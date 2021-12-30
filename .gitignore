@@ -131,4 +131,3 @@ dmypy.json
 # Pyre type checker
 .pyre/
 
-modules/test_tracking.py
