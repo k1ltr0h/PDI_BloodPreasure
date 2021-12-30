@@ -8,6 +8,19 @@ from modules.face_recon import Face
 from scipy import signal
 
 import argparse
+import time
+from multiprocessing import Pool, Queue
+
+# intialize global variables for the pool processes:
+def init_pool(d_b):
+    global detection_buffer
+    detection_buffer = d_b
+
+
+def detect_object(frame):
+    time.sleep(1)
+    detection_buffer.put(frame)
+
 
 # highpass filter
 
@@ -22,7 +35,65 @@ def butter_highpass_filter(data, cutoff, fs, order=5):
     y = signal.filtfilt(b, a, data)
     return y
 
+def process_image():
+    while(True):
+        frame = detection_buffer.get()
+        if frame is not None:  
+
+            tmp = frame.copy()
+            tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2YCrCb)
+
+            points = face.get_roi_of_face(frame)
+
+            face_roi = face.face_rectangle #[x1, y1, new_w, new_h]
+
+            tmp = face.filterBySkinColor("Yellow", tmp)
+
+            tmp = cv2.bitwise_and(tmp, tmp, mask = cv2.cvtColor(face.mask, cv2.COLOR_BGR2GRAY))
+
+            # signal preprocessing
+            # frame in rgb
+            tmp_rgb = cv2.cvtColor(tmp, cv2.COLOR_YCrCb2BGR)
+
+            # get average per channel
+            print(face_roi)
+            roi_size = face_roi[0][2] * face_roi[0][3]
+
+            (B, G, R) = cv2.split(tmp_rgb)
+
+            Vr_val = (1000 / roi_size)*np.sum(R)
+            Vg_val = (1000 / roi_size)*np.sum(G)
+            Vb_val = (1000 / roi_size)*np.sum(B)
+            
+            Vr.append(Vr_val)
+            Vg.append(Vg_val)
+            Vb.append(Vb_val)
+
+            # print(V)
+
+            if type(points) == type(None):
+                continue
+
+            # cv2.imshow("Color convertion", tmp)
+
+            if cv2.waitKey(1) == 27: ## ESC
+                break
+
+        else:
+            break
+    return
+
+global frame_count
+global Vr, Vg, Vb
+global face
+
 if __name__ == "__main__":
+
+    detection_buffer = Queue()
+    # 6 workers: 1 for the show task and 5 to process frames:
+    pool = Pool(6, initializer=init_pool, initargs=(detection_buffer,))
+
+    process_future = pool.apply_async(process_image)
 
     parser = argparse.ArgumentParser()
     parser.add_argument("-f", "--file", type=str, default=None, help = "Process a file instead of video recording")
@@ -38,60 +109,28 @@ if __name__ == "__main__":
     assert(fps >= 20)
     face = Face()
 
-    frame_count = 0
-
     Vr = []
     Vg = []
     Vb = []
 
-    while(capture.isOpened()):
+    futures = []
+
+    while True:
         ret, frame = capture.read()
-        if not ret: 
+        if ret:
+            f = pool.apply_async(detect_object, args=(frame, ))
+            futures.append(f)
+            time.sleep(0.025)
+        else:
             break
 
-        if frame_count == 30*fps:
-            break
-        tmp = frame.copy()
-        tmp = cv2.cvtColor(tmp, cv2.COLOR_BGR2YCrCb)
+    for f in futures:
+        f.get()
 
-        points = face.get_roi_of_face(frame)
+    detection_buffer.put(None)
+    process_future.get()
 
-        face_roi = face.face_rectangle #[x1, y1, new_w, new_h]
-
-        tmp = face.filterBySkinColor("Yellow", tmp)
-
-        tmp = cv2.bitwise_and(tmp, tmp, mask = cv2.cvtColor(face.mask, cv2.COLOR_BGR2GRAY))
-
-        # signal preprocessing
-        # frame in rgb
-        tmp_rgb = cv2.cvtColor(tmp, cv2.COLOR_YCrCb2BGR)
-
-        # get average per channel
-        roi_size = face_roi[0][2] * face_roi[0][3]
-
-        (B, G, R) = cv2.split(tmp_rgb)
-
-        Vr_val = (1000 / roi_size)*np.sum(R)
-        Vg_val = (1000 / roi_size)*np.sum(G)
-        Vb_val = (1000 / roi_size)*np.sum(B)
-        
-        Vr.append(Vr_val)
-        Vg.append(Vg_val)
-        Vb.append(Vb_val)
-
-        # print(V)
-
-        if type(points) == type(None):
-            continue
-
-        # cv2.imshow("Color convertion", tmp)
-
-        if cv2.waitKey(1) == 27: ## ESC
-            break
-        
-        frame_count += 1
-        if(frame_count%fps==0):
-            print(str(int(frame_count/fps)) + "[s]")
+    print("finish processing")
 
 
     # signal preprocessing
@@ -142,7 +181,7 @@ if __name__ == "__main__":
         Ev.append(Vg_ica_def[peaks_down[j]])
     Ep_mean=sum(Ep)/len(Ep)
     Ev_mean=sum(Ev)/len(Ev)
-    bmi=20
+    bmi= 27.1 #20
     SBP = 23.7889 + 95.4335 * Ep_mean + 4.5958 * bmi - 5.109 *Ep_mean*bmi
     DBP = -17.3772 - 115.1747 * Ev_mean + 4.0251 * bmi + 5.2825 * Ev_mean * bmi
 
