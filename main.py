@@ -32,7 +32,6 @@ if __name__ == "__main__":
     gray_frames = []
     frame_c = 0
     face = Face()
-    #tracking = TrackingPoints(face, max_points_=300)
     tracking = TrackPoints(face, max_trace_history=300)
     #tracking = TrackingPoints(face, max_history_points_ = 300,max_points_=300)
     sig = SignalProcess(tracking, fps)
@@ -43,7 +42,7 @@ if __name__ == "__main__":
     mean_sys = []
     mean_dis = []
     while capture.isOpened():
-        # Get a frame and wait for 15 frames to pass
+        # Get a frame and wait for stable record
         ret, frame = capture.read()
         if not ret:
             break
@@ -52,10 +51,6 @@ if __name__ == "__main__":
 
         gray_frames.insert(0, gray)
 
-#        points = tracking.getPoints(gray)
-#        tracking.filter_points(points, gray)
-#        prev_points = tracking.prev_points.reshape(-1, 2)
-
 
         if frame_c >= 15:
             
@@ -63,11 +58,9 @@ if __name__ == "__main__":
             tracking.track_points(gray_frames[1], gray_frames[0])
             longest_trace = max( [len(trace) for trace in tracking.traces] )
 
-            
-            #if longest_trace >= 2* (fps+1):
+            # Find a longest trace 
             if longest_trace > 3*(fps):
                 c_bpm, c_sist, c_dist = sig.find_bpm()
-                #bpm = sig.find_bpm()
                 if c_bpm != 0:
                     mean_bpm.append(c_bpm)
                     mean_sys.append(c_sist)
